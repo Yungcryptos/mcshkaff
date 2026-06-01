@@ -2939,14 +2939,7 @@ document.addEventListener('click', function(e) {
     });
 });
 
-// SUPABASE — инициализация (конфиг объявлен выше) catch(e) {
-  console.error('Supabase init failed:', e);
-  // Показываем сообщение об ошибке в чате
-  document.addEventListener('DOMContentLoaded', () => {
-    const c = document.getElementById('chat-messages');
-    if (c) c.innerHTML = '<div class="chat-sys">⚠ Чат недоступен: расширение браузера блокирует соединение. Попробуй режим инкогнито или отключи расширения.</div>';
-  });
-}
+// SUPABASE — инициализация выше
 
 // Текущий юзер (null если не залогинен)
 let currentUser = null;
@@ -3032,6 +3025,10 @@ function renderAuthArea(loggedIn) {
     area.innerHTML = `<button class="auth-btn" onclick="openAuthModal('login')">ВОЙТИ</button>`;
 
   }
+
+  // показать/скрыть кнопку админки
+  const _adminItem = document.getElementById('admin-menu-item');
+  if (_adminItem) _adminItem.style.display = loggedIn && isAdmin() ? '' : 'none';
 }
 
 function toggleUserMenu() {
@@ -4633,13 +4630,6 @@ async function adminSaveAbout(){
   catch(e){msg.className='admin-msg err';msg.textContent=e.message;}
 }
 
-// Patch renderAuthArea to show admin button
-const _origRA=renderAuthArea;
-function renderAuthArea(v){_origRA(v);const a=document.getElementById('admin-menu-item');if(a)a.style.display=v&&isAdmin()?'':'none';}
-
-// Patch _handleSession to update admin visibility
-const _origHS=_handleSession;
-async function _handleSession(s){await _origHS(s);const a=document.getElementById('admin-menu-item');if(a)a.style.display=currentUser&&isAdmin()?'':'none';}
 
 // Playlists tab handler
 document.querySelectorAll('.tnb').forEach(b=>{
@@ -4658,14 +4648,6 @@ document.querySelectorAll('.tnb').forEach(b=>{
   }
 });
 
-// renderAbout patch to use DATA.about from Supabase
-const _origRenderAbout = renderAbout;
-function renderAbout() {
-  const a = DATA.about || {};
-  const bodyEl = document.getElementById('about-body');
-  if (bodyEl && a.text) bodyEl.innerHTML = a.text;
-  else if (_origRenderAbout) _origRenderAbout();
-}
 
 </script>
 
